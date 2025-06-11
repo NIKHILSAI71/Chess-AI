@@ -1,0 +1,1359 @@
+/* 
+Chess AI - Professional Black & White UI
+Inspired by shadcn/ui design system
+*/
+
+/* CSS Variables for Design System */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 9% 9%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 5.9% 10%;
+  --radius: 0.5rem;
+  
+  /* Chess Board Theme Variables */
+  --board-light: 240 19% 92%;
+  --board-dark: 240 8% 70%;
+  --board-border: 240 9% 9%;
+  --board-coord-color: 240 3.8% 46.1%;
+  --piece-white: 0 0% 95%;
+  --piece-black: 240 6% 10%;
+  --piece-outline: 240 9% 9%;
+  --move-indicator: 120 93% 79%;
+  --capture-indicator: 0 93% 79%;
+  --selected-square: 47 96% 77%;
+}
+
+/* Global Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  line-height: 1.5;
+  height: 100vh;
+  overflow: hidden;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Main App Layout */
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  border-bottom: 2px solid hsl(var(--border));
+  background: hsl(var(--card));
+  padding: 1rem 2rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px -2px rgb(0 0 0 / 0.1);
+}
+
+.header-content {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  max-width: 1600px;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+/* Chess AI Logo Section */
+.logo-section {
+  display: flex;
+  align-items: center;
+}
+
+.chess-ai-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-icon {
+  font-size: 2.5rem;
+  color: hsl(var(--primary));
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.logo-subtitle {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+  letter-spacing: 0.25px;
+}
+
+/* Player VS Section */
+.player-vs-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vs-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: hsl(var(--accent));
+  padding: 1rem 2rem;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+}
+
+.player-box {
+  position: relative;
+  background: hsl(var(--background));
+  border: 2px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+  text-align: center;
+}
+
+.player-box:hover {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+}
+
+.player-box.human-player {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.05);
+}
+
+.player-box.ai-player {
+  border-color: hsl(var(--destructive));
+  background: hsl(var(--destructive) / 0.05);
+}
+
+.player-label {
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  display: block;
+}
+
+.player-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  margin-top: 0.25rem;
+  display: none;
+  z-index: 1000;
+}
+
+.player-box:hover .player-dropdown {
+  display: block;
+}
+
+.player-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.vs-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 1px;
+}
+
+/* Game Controls Section */
+.game-controls-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ai-thinking {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: hsl(var(--accent));
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid hsl(var(--border));
+  border-top: 2px solid hsl(var(--primary));
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Main Content Layout */
+.main-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 300px 1fr 320px;
+  gap: 0;
+  overflow: hidden;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Panel Styles */
+.left-panel,
+.right-panel {
+  background: hsl(var(--muted) / 0.3);
+  border-right: 1px solid hsl(var(--border));
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+}
+
+.right-panel {
+  border-right: none;
+  border-left: 1px solid hsl(var(--border));
+}
+
+/* Captured Pieces Styling */
+.captured-pieces-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.captured-count {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 0.25rem 0.5rem;
+  border-radius: calc(var(--radius) / 2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.captured-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  min-height: 3rem;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
+.captured-piece {
+  font-size: 1.5rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--accent));
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) / 2);
+  transition: all 0.2s ease;
+}
+
+.captured-piece:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.2);
+}
+
+.captured-pieces:empty::after {
+  content: "No pieces captured";
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  width: 100%;
+}
+
+/* Remove scrollbar styling but keep functionality */
+.left-panel::-webkit-scrollbar,
+.right-panel::-webkit-scrollbar,
+.moves-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.left-panel::-webkit-scrollbar-track,
+.right-panel::-webkit-scrollbar-track,
+.moves-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.left-panel::-webkit-scrollbar-thumb,
+.right-panel::-webkit-scrollbar-thumb,
+.moves-container::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 2px;
+}
+
+.left-panel::-webkit-scrollbar-thumb:hover,
+.right-panel::-webkit-scrollbar-thumb:hover,
+.moves-container::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Board Section */
+.board-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--background));
+  padding: 1rem;
+  min-height: 0;
+  flex: 1;
+  gap: 1rem;
+}
+
+/* Current Turn Display */
+.current-turn-display {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.current-turn-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  background: hsl(var(--accent));
+  padding: 0.75rem 2rem;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.board-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: hsl(var(--card));
+  padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Bottom Header */
+.board-bottom-header {
+  width: 100%;
+  max-width: 800px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.bottom-header-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Move Navigation Section */
+.move-navigation-section {
+  text-align: left;
+}
+
+.move-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav-btn {
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 2.5rem;
+}
+
+.nav-btn:hover {
+  background: hsl(var(--accent));
+  border-color: hsl(var(--primary));
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Move Recording Section */
+.move-recording-section {
+  text-align: center;
+}
+
+.recording-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.move-counter {
+  font-size: 1rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  background: hsl(var(--accent));
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+}
+
+.export-btn {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+  background: hsl(var(--primary) / 0.9);
+}
+
+/* Game Status Mini */
+.game-status-mini {
+  text-align: right;
+}
+
+.status-indicator {
+  background: hsl(var(--accent));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+}
+
+.status-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.board-and-files {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Chess Board */
+.chess-board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  border: 3px solid hsl(var(--board-border));
+  border-radius: 6px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  width: min(70vh, 500px);
+  height: min(70vh, 500px);
+  position: relative;
+}
+
+.square {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+  width: 100%;
+  height: 100%;
+  min-height: 45px;
+}
+
+.square.light {
+  background: hsl(var(--board-light));
+}
+
+.square.dark {
+  background: hsl(var(--board-dark));
+}
+
+.square.selected {
+  background: hsl(var(--selected-square)) !important;
+  box-shadow: inset 0 0 0 3px hsl(var(--primary));
+  z-index: 10;
+}
+
+.square.legal-move {
+  position: relative;
+}
+
+.square.legal-move::after {
+  content: '';
+  position: absolute;
+  width: 25%;
+  height: 25%;
+  border-radius: 50%;
+  background: hsl(var(--move-indicator));
+  opacity: 0.8;
+  z-index: 5;
+}
+
+.square.capture-move {
+  position: relative;
+}
+
+.square.capture-move::after {
+  content: '';
+  position: absolute;
+  inset: 8%;
+  border: 3px solid hsl(var(--capture-indicator));
+  border-radius: 50%;
+  opacity: 0.9;
+  z-index: 5;
+}
+
+.square:hover {
+  filter: brightness(1.1);
+}
+
+/* Chess Pieces */
+.piece {
+  font-size: inherit;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  width: 90%;
+  height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.piece:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+.piece.white {
+  color: hsl(var(--piece-white));
+  filter: drop-shadow(0 0 2px hsl(var(--piece-outline)));
+}
+
+.piece.black {
+  color: hsl(var(--piece-black));
+  filter: drop-shadow(0 0 2px hsl(var(--piece-white)));
+}
+
+/* Piece movement animation */
+.piece.moving {
+  pointer-events: none;
+  z-index: 100;
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+/* Coordinates */
+.coordinates {
+  display: flex;
+  color: hsl(var(--board-coord-color));
+  font-weight: 500;
+  font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.coordinates-left {
+  flex-direction: column;
+  gap: 2px;
+  justify-content: space-around;
+  height: min(70vh, 500px);
+  padding: 3px 0;
+}
+
+.coordinates-bottom {
+  gap: 2px;
+  justify-content: space-around;
+  width: min(70vh, 500px);
+  padding: 0 3px;
+  margin-top: 4px;
+}
+
+.rank,
+.file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Card Component */
+.card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 1rem 1rem 0.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.card-content {
+  padding: 1rem;
+}
+
+/* Status Display */
+.status-display {
+  text-align: center;
+}
+
+.status-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+}
+
+.ai-thinking {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid hsl(var(--border));
+  border-top: 2px solid hsl(var(--primary));
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Player Section */
+.player-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
+}
+
+.player-icon {
+  font-size: 1.5rem;
+}
+
+.player-info {
+  flex: 1;
+}
+
+.player-name {
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+}
+
+.player-color {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  margin-top: 0.25rem;
+}
+
+/* AI Statistics */
+.ai-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.stat:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.stat-value {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Button Styles */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.btn-primary {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+}
+
+.btn-primary:hover {
+  background: hsl(var(--primary) / 0.9);
+}
+
+.btn-outline {
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.btn-outline:hover {
+  background: hsl(var(--secondary));
+}
+
+/* Settings Grid */
+.settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.setting-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+}
+
+.select {
+  flex: 1;
+  height: 2rem;
+  width: 100%;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  color: hsl(var(--foreground));
+  transition: border-color 0.2s;
+}
+
+.select:focus {
+  outline: none;
+  border-color: hsl(var(--ring));
+}
+
+/* Checkbox */
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 2px;
+  background: hsl(var(--background));
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox:checked {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+}
+
+.checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: hsl(var(--primary-foreground));
+  font-size: 0.6rem;
+  font-weight: 600;
+}
+
+/* Move History */
+.move-history-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.move-history-card .card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 0.75rem;
+}
+
+.move-controls {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.move-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius);
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.move-nav-btn:hover:not(:disabled) {
+  background: hsl(var(--secondary));
+}
+
+.move-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.moves-container {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 250px;
+  padding: 0.5rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background: hsl(var(--muted) / 0.3);
+}
+
+.move-pair {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  align-items: center;
+}
+
+.move-number {
+  color: hsl(var(--muted-foreground));
+  width: 1.5rem;
+  text-align: right;
+  font-weight: 600;
+}
+
+.move {
+  color: hsl(var(--foreground));
+  cursor: pointer;
+  padding: 0.125rem 0.5rem;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  min-width: 3rem;
+  text-align: center;
+}
+
+.move:hover {
+  background: hsl(var(--secondary));
+  border-color: hsl(var(--border));
+}
+
+.move.current {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+}
+
+.move.white-move {
+  margin-right: 0.5rem;
+}
+
+.move.black-move {
+  margin-left: auto;
+}
+
+/* Game Result */
+.game-result {
+  text-align: center;
+  padding: 1rem;
+  margin-top: 1rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background: hsl(var(--card));
+}
+
+.result-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin-bottom: 0.5rem;
+}
+
+.result-reason {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Captured Pieces */
+.captured-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.captured-section {
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  background: hsl(var(--muted) / 0.3);
+}
+
+.captured-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 0.5rem;
+}
+
+.captured-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  min-height: 2rem;
+}
+
+.captured-piece {
+  font-size: 1.25rem;
+  opacity: 0.7;
+}
+
+/* Promotion Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: hsl(var(--card));
+  padding: 2rem;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+
+.modal-content h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: hsl(var(--foreground));
+}
+
+.promotion-pieces {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.promotion-piece {
+  font-size: 3rem;
+  padding: 1rem;
+  border: 2px solid hsl(var(--border));
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: hsl(var(--background));
+}
+
+.promotion-piece:hover {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--secondary));
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .main-content {
+    grid-template-columns: 280px 1fr 280px;
+  }
+  
+  .left-panel,
+  .right-panel {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+  
+  .left-panel,
+  .right-panel {
+    max-height: none;
+    overflow: visible;
+  }
+  
+  .board-section {
+    order: 1;
+  }
+  
+  .left-panel {
+    order: 2;
+  }
+  
+  .right-panel {
+    order: 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    padding: 0 1rem;
+  }
+  
+  .header-title {
+    font-size: 1.25rem;
+  }
+  
+  .header-subtitle {
+    display: none;
+  }
+  
+  .chess-board {
+    grid-template-columns: repeat(8, 45px);
+    grid-template-rows: repeat(8, 45px);
+  }
+  
+  .square {
+    width: 45px;
+    height: 45px;
+    font-size: 1.5rem;
+  }
+  
+  .coordinates-left {
+    height: 360px;
+  }
+  
+  .coordinates-bottom {
+    width: 360px;
+  }
+  
+  .rank,
+  .file {
+    height: 45px;
+    width: 45px;
+  }
+    .board-wrapper {
+    padding: 1rem;
+  }
+}
+
+/* ========================================
+   CHESS BOARD THEMES
+   ======================================== */
+
+/* Classic Theme (Default) */
+.theme-classic {
+  --board-light: 240 19% 92%;
+  --board-dark: 240 8% 70%;
+  --board-border: 240 9% 9%;
+  --piece-white: 0 0% 95%;
+  --piece-black: 240 6% 10%;
+}
+
+/* Modern Theme */
+.theme-modern {
+  --board-light: 210 20% 95%;
+  --board-dark: 210 15% 75%;
+  --board-border: 210 25% 20%;
+  --piece-white: 0 0% 98%;
+  --piece-black: 210 20% 15%;
+}
+
+/* Minimal Theme */
+.theme-minimal {
+  --board-light: 0 0% 98%;
+  --board-dark: 0 0% 85%;
+  --board-border: 0 0% 50%;
+  --piece-white: 0 0% 95%;
+  --piece-black: 0 0% 20%;
+}
+
+/* Wood Theme */
+.theme-wood {
+  --board-light: 35 25% 85%;
+  --board-dark: 25 30% 55%;
+  --board-border: 20 40% 25%;
+  --piece-white: 0 0% 95%;
+  --piece-black: 20 15% 15%;
+}
+
+/* Neon Theme */
+.theme-neon {
+  --board-light: 180 100% 95%;
+  --board-dark: 180 50% 70%;
+  --board-border: 180 100% 20%;
+  --piece-white: 0 0% 95%;
+  --piece-black: 180 100% 10%;
+}
+
+/* Ocean Theme */
+.theme-ocean {
+  --board-light: 200 50% 90%;
+  --board-dark: 220 40% 65%;
+  --board-border: 220 60% 25%;
+  --piece-white: 0 0% 95%;
+  --piece-black: 220 50% 15%;
+}
+
+/* Forest Theme */
+.theme-forest {
+  --board-light: 120 30% 85%;
+  --board-dark: 120 25% 60%;
+  --board-border: 120 40% 25%;
+  --piece-white: 0 0% 95%;
+  --piece-black: 120 30% 15%;
+}
+
+/* Sunset Theme */
+.theme-sunset {
+  --board-light: 25 60% 88%;
+  --board-dark: 15 50% 65%;
+  --board-border: 10 60% 30%;
+  --piece-white: 0 0% 95%;
+  --piece-black: 15 40% 20%;
+}
+
+/* Custom Theme Variables (can be overridden by JavaScript) */
+.theme-custom {
+  --board-light: var(--custom-light, 240 19% 92%);
+  --board-dark: var(--custom-dark, 240 8% 70%);
+  --board-border: var(--custom-border, 240 9% 9%);
+  --piece-white: var(--custom-piece-white, 0 0% 95%);
+  --piece-black: var(--custom-piece-black, 240 6% 10%);
+}
+
+/* Theme transition animation */
+.chess-board,
+.square,
+.piece {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, filter 0.3s ease;
+}
+
+/* Custom color picker styles */
+.color-picker-group {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.color-input {
+  width: 2rem;
+  height: 1.5rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 3px;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+
+.color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 2px;
+}
+
+/* Theme preview */
+.theme-preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.theme-preview-square {
+  transition: opacity 0.2s ease;
+}
+
+.theme-preview:hover .theme-preview-square {
+  opacity: 0.8;
+}

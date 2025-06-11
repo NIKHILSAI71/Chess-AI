@@ -1,0 +1,28 @@
+{
+  "training_type": "quick",
+  "data_file": "models/initial_training_positions.json",
+  "model_output": "models/production_chess_model.pth",
+    "network": {
+    "input_channels": 12,
+    "filters": 128,
+    "num_blocks": 6,
+    "policy_channels": 73,
+    "value_hidden": 256
+  },
+  
+  "supervised_epochs": 5,
+  "self_play_iterations": 20,
+  "games_per_iteration": 50,
+  "mcts_simulations": 200,
+  
+  "learning_rate": 0.001,
+  "batch_size": 64,
+  "weight_decay": 0.0001,
+  
+  "save_frequency": 5,
+  "eval_frequency": 10,
+  "use_wandb": false,
+  "use_tensorboard": true,
+  
+  "description": "Quick training configuration for immediate results"
+}

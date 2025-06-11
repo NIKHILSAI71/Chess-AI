@@ -1,0 +1,28 @@
+{
+  "training_type": "production",
+  "data_file": "trainning-data/Chess-game-data.csv",
+  "model_output": "models/production_chess_model.pth",
+    "network": {
+    "input_channels": 18,
+    "filters": 256,
+    "num_blocks": 12,
+    "policy_channels": 73,
+    "value_hidden": 256
+  },
+  
+  "supervised_epochs": 25,
+  "self_play_iterations": 100,
+  "games_per_iteration": 200,
+  "mcts_simulations": 800,
+  
+  "learning_rate": 0.0005,
+  "batch_size": 128,
+  "weight_decay": 0.0001,
+  
+  "save_frequency": 10,
+  "eval_frequency": 20,
+  "use_wandb": true,
+  "use_tensorboard": true,
+  
+  "description": "Full production training configuration for tournament-strength AI"
+}

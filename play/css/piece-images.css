@@ -1,0 +1,55 @@
+/* Chess piece image styles and fallbacks */
+
+/* Update piece styling to support images */
+.piece {
+    font-size: 36px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.2s ease;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Piece image classes - use when images are available */
+.piece.wp { background-image: url('assets/wp.png'); }
+.piece.wr { background-image: url('assets/wr.png'); }
+.piece.wn { background-image: url('assets/wn.png'); }
+.piece.wb { background-image: url('assets/wb.png'); }
+.piece.wq { background-image: url('assets/wq.png'); }
+.piece.wk { background-image: url('assets/wk.png'); }
+.piece.bp { background-image: url('assets/bp.png'); }
+.piece.br { background-image: url('assets/br.png'); }
+.piece.bn { background-image: url('assets/bn.png'); }
+.piece.bb { background-image: url('assets/bb.png'); }
+.piece.bq { background-image: url('assets/bq.png'); }
+.piece.bk { background-image: url('assets/bk.png'); }
+
+/* Hide text when images are loaded */
+.piece.has-image {
+    color: transparent;
+    font-size: 0;
+}
+
+/* Fallback for missing images */
+.piece.no-image {
+    color: inherit;
+    font-size: 36px;
+}
+
+/* Image loading animation */
+.piece.loading {
+    opacity: 0.5;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.5; }
+}

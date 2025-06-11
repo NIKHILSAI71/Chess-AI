@@ -1,0 +1,1 @@
+# Core chess engine package
