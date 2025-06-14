@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess AI - Strategic Battle</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/piece-images.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app">        <!-- Header with Chess AI Logo and Player Selection -->
+    <div class="app">
+        <!-- Header -->
         <header class="header">
             <div class="header-content">
                 <div class="logo-section">
@@ -21,29 +21,19 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="player-vs-section">
                     <div class="vs-container">
                         <div class="player-box human-player" id="player1-box">
                             <span class="player-label">HUMAN</span>
-                            <div class="player-dropdown" id="player1-dropdown">
-                                <select class="player-select">
-                                    <option value="human">Human</option>
-                                    <option value="ai">AI</option>
-                                </select>
-                            </div>
                         </div>
                         <div class="vs-text">VS</div>
                         <div class="player-box ai-player" id="player2-box">
                             <span class="player-label">AI</span>
-                            <div class="player-dropdown" id="player2-dropdown">
-                                <select class="player-select">
-                                    <option value="ai">AI</option>
-                                    <option value="human">Human</option>
-                                </select>
-                            </div>
                         </div>
                     </div>
                 </div>
+                
                 <div class="game-controls-section">
                     <button id="new-game-btn" class="btn btn-primary">NEW GAME</button>
                     <div class="ai-thinking" id="ai-thinking" style="display: none;">
@@ -54,20 +44,18 @@
             </div>
         </header>
 
-        <!-- Main Game Layout -->
+        <!-- Main Content -->
         <main class="main-content">
-            <!-- Left Panel: Captured Pieces & Controls -->
+            <!-- Left Panel -->
             <aside class="left-panel">
-                <!-- Captured Pieces - Black (Top) -->
-                <div class="card captured-pieces-card">
+                <!-- Captured Pieces - Black -->
+                <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Black Captured</h3>
                         <span class="captured-count" id="black-captured-count">0</span>
                     </div>
                     <div class="card-content">
-                        <div class="captured-pieces" id="black-captured-pieces">
-                            <!-- Captured black pieces will appear here -->
-                        </div>
+                        <div class="captured-pieces" id="black-captured-pieces"></div>
                     </div>
                 </div>
 
@@ -78,22 +66,22 @@
                     </div>
                     <div class="card-content">
                         <div class="button-group">
-                            <button id="new-game-btn" class="btn btn-primary">NEW GAME</button>
-                            <button id="flip-board-btn" class="btn btn-outline">FLIP BOARD</button>
-                            <button id="undo-btn" class="btn btn-outline">UNDO MOVE</button>
+                            <button id="new-game-button" class="btn btn-primary">New Game</button>
+                            <button id="flip-board-btn" class="btn btn-outline">Flip Board</button>
+                            <button id="undo-btn" class="btn btn-outline">Undo Move</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- AI Configuration -->
-                <div class="card" id="ai-config-card">
+                <!-- AI Settings -->
+                <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">AI Settings</h3>
                     </div>
                     <div class="card-content">
                         <div class="setting-group">
                             <label for="ai-difficulty" class="setting-label">Difficulty</label>
-                            <select id="ai-difficulty" class="setting-select">
+                            <select id="ai-difficulty" class="select">
                                 <option value="1">Beginner</option>
                                 <option value="3">Easy</option>
                                 <option value="5" selected>Medium</option>
@@ -103,7 +91,7 @@
                         </div>
                         <div class="setting-group">
                             <label for="human-color" class="setting-label">Human Plays</label>
-                            <select id="human-color" class="setting-select">
+                            <select id="human-color" class="select">
                                 <option value="white" selected>White</option>
                                 <option value="black">Black</option>
                             </select>
@@ -111,99 +99,58 @@
                     </div>
                 </div>
 
-                <!-- Captured Pieces - White (Bottom) -->
-                <div class="card captured-pieces-card">
+                <!-- Captured Pieces - White -->
+                <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">White Captured</h3>
                         <span class="captured-count" id="white-captured-count">0</span>
                     </div>
                     <div class="card-content">
-                        <div class="captured-pieces" id="white-captured-pieces">
-                            <!-- Captured white pieces will appear here -->
-                        </div>
+                        <div class="captured-pieces" id="white-captured-pieces"></div>
                     </div>
                 </div>
-            </aside>            <!-- Center: Chess Board -->
-            <section class="board-section">
-                <!-- Current Turn Display -->
-                <div class="current-turn-display">
-                    <span class="current-turn-text" id="current-turn-text">WHITE TO MOVE</span>
-                </div>
+            </aside>
 
+            <!-- Center: Chess Board -->
+            <section class="board-section">
+                <div class="current-turn-display">
+                    <span class="current-turn-text" id="current-turn-text">White to Move</span>
+                </div>
+                
                 <div class="board-container">
                     <div class="board-wrapper">
-                        <!-- Rank Labels -->
-                        <div class="rank-labels">
-                            <div class="rank-label">8</div>
-                            <div class="rank-label">7</div>
-                            <div class="rank-label">6</div>
-                            <div class="rank-label">5</div>
-                            <div class="rank-label">4</div>
-                            <div class="rank-label">3</div>
-                            <div class="rank-label">2</div>
-                            <div class="rank-label">1</div>
+                        <div class="coordinates coordinates-left">
+                            <div class="rank">8</div>
+                            <div class="rank">7</div>
+                            <div class="rank">6</div>
+                            <div class="rank">5</div>
+                            <div class="rank">4</div>
+                            <div class="rank">3</div>
+                            <div class="rank">2</div>
+                            <div class="rank">1</div>
                         </div>
                         
                         <div class="board-and-files">
-                            <!-- Chess Board -->
-                            <div id="chess-board" class="chess-board">
-                                <!-- Board squares will be generated here -->
+                            <div class="chess-board" id="chess-board">
+                                <!-- Board squares will be generated by JavaScript -->
                             </div>
                             
-                            <!-- File Labels -->
-                            <div class="file-labels">
-                                <div class="file-label">a</div>
-                                <div class="file-label">b</div>
-                                <div class="file-label">c</div>
-                                <div class="file-label">d</div>
-                                <div class="file-label">e</div>
-                                <div class="file-label">f</div>
-                                <div class="file-label">g</div>
-                                <div class="file-label">h</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bottom Controls Header -->
-                <div class="board-bottom-header">
-                    <div class="bottom-header-content">
-                        <!-- Move Navigation -->
-                        <div class="move-navigation-section">
-                            <h4 class="section-title">Move Navigation</h4>
-                            <div class="move-controls">
-                                <button id="move-first" class="nav-btn" title="First Move">|◀</button>
-                                <button id="move-prev" class="nav-btn" title="Previous Move">◀</button>
-                                <button id="move-next" class="nav-btn" title="Next Move">▶</button>
-                                <button id="move-last" class="nav-btn" title="Last Move">▶|</button>
-                            </div>
-                        </div>
-
-                        <!-- Move Recording -->
-                        <div class="move-recording-section">
-                            <h4 class="section-title">Move Recording</h4>
-                            <div class="recording-controls">
-                                <div class="move-counter">
-                                    <span>Move: </span>
-                                    <span id="current-move-number">0</span>
-                                    <span> / </span>
-                                    <span id="total-moves">0</span>
-                                </div>
-                                <button id="export-pgn" class="export-btn">Export PGN</button>
-                            </div>
-                        </div>
-
-                        <!-- Game Status -->
-                        <div class="game-status-mini">
-                            <div class="status-indicator" id="game-status">
-                                <span class="status-text">In Progress</span>
+                            <div class="coordinates coordinates-bottom">
+                                <div class="file">a</div>
+                                <div class="file">b</div>
+                                <div class="file">c</div>
+                                <div class="file">d</div>
+                                <div class="file">e</div>
+                                <div class="file">f</div>
+                                <div class="file">g</div>
+                                <div class="file">h</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Right Panel: Board Themes & Move History -->
+            <!-- Right Panel -->
             <aside class="right-panel">
                 <!-- Board Themes -->
                 <div class="card">
@@ -213,47 +160,20 @@
                     <div class="card-content">
                         <div class="setting-group">
                             <label for="board-theme" class="setting-label">Theme</label>
-                            <select id="board-theme" class="setting-select">
+                            <select id="board-theme" class="select">
                                 <option value="classic" selected>Classic</option>
                                 <option value="modern">Modern</option>
                                 <option value="minimal">Minimal</option>
                                 <option value="wood">Wood</option>
                                 <option value="neon">Neon</option>
                                 <option value="ocean">Ocean</option>
-                                <option value="forest">Forest</option>
-                                <option value="sunset">Sunset</option>
-                                <option value="custom">Custom</option>
                             </select>
                         </div>
-                        
-                        <!-- Custom Theme Controls -->
-                        <div id="custom-theme-controls" style="display: none;">
-                            <div class="custom-colors">
-                                <div class="color-picker-group">
-                                    <label for="custom-light">Light Squares</label>
-                                    <input type="color" id="custom-light" class="color-input" value="#ece8d9">
-                                </div>
-                                <div class="color-picker-group">
-                                    <label for="custom-dark">Dark Squares</label>
-                                    <input type="color" id="custom-dark" class="color-input" value="#b8860b">
-                                </div>
-                                <div class="color-picker-group">
-                                    <label for="custom-border">Border</label>
-                                    <input type="color" id="custom-border" class="color-input" value="#2c2c2c">
-                                </div>
-                                <div class="color-picker-group">
-                                    <label for="custom-piece-white">White Pieces</label>
-                                    <input type="color" id="custom-piece-white" class="color-input" value="#f5f5f5">
-                                </div>
-                                <div class="color-picker-group">
-                                    <label for="custom-piece-black">Black Pieces</label>
-                                    <input type="color" id="custom-piece-black" class="color-input" value="#1a1a1a">
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                </div>                <!-- Move History -->
-                <div class="card">
+                </div>
+
+                <!-- Move History -->
+                <div class="card move-history-card">
                     <div class="card-header">
                         <h3 class="card-title">Move History</h3>
                     </div>
@@ -265,7 +185,7 @@
                 </div>
 
                 <!-- AI Statistics -->
-                <div class="card" id="ai-stats-card">
+                <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">AI Statistics</h3>
                     </div>
@@ -288,6 +208,43 @@
                 </div>
             </aside>
         </main>
+
+        <!-- Bottom Footer -->
+        <footer class="board-bottom-header">
+            <div class="bottom-header-content">
+                <!-- Move Navigation -->
+                <div class="move-navigation-section">
+                    <h4 class="section-title">Move Navigation</h4>
+                    <div class="move-controls">
+                        <button id="move-first" class="nav-btn" title="First Move">|◀</button>
+                        <button id="move-prev" class="nav-btn" title="Previous Move">◀</button>
+                        <button id="move-next" class="nav-btn" title="Next Move">▶</button>
+                        <button id="move-last" class="nav-btn" title="Last Move">▶|</button>
+                    </div>
+                </div>
+
+                <!-- Move Recording -->
+                <div class="move-recording-section">
+                    <h4 class="section-title">Move Recording</h4>
+                    <div class="recording-controls">
+                        <div class="move-counter">
+                            <span>Move: </span>
+                            <span id="current-move-number">0</span>
+                            <span> / </span>
+                            <span id="total-moves">0</span>
+                        </div>
+                        <button id="export-pgn" class="export-btn">Export PGN</button>
+                    </div>
+                </div>
+
+                <!-- Game Status -->
+                <div class="game-status-mini">
+                    <div class="status-indicator" id="game-status">
+                        <span class="status-text">In Progress</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <!-- Promotion Dialog -->
@@ -306,192 +263,9 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Scripts -->
+    </div>    <!-- Scripts -->
     <script src="js/chess-logic.js"></script>
     <script src="js/chess-ui.js"></script>
-    <script src="js/chess-ui-enhanced.js"></script>
-    <script src="js/chess-ai.js"></script>
-    <script src="js/main.js"></script>
-</body>
-</html>
-                </div>
-            </aside>
-
-            <!-- Center: Chess Board -->
-            <section class="board-section">
-                <div class="board-container">
-                    <div class="board-wrapper">
-                        <div class="coordinates coordinates-left">
-                            <div class="rank">8</div>
-                            <div class="rank">7</div>
-                            <div class="rank">6</div>
-                            <div class="rank">5</div>
-                            <div class="rank">4</div>
-                            <div class="rank">3</div>
-                            <div class="rank">2</div>
-                            <div class="rank">1</div>
-                        </div>
-                        
-                        <div class="board-and-files">
-                            <div class="chess-board" id="chess-board">
-                                <!-- Squares will be generated by JavaScript -->
-                            </div>
-                            
-                            <div class="coordinates coordinates-bottom">
-                                <div class="file">a</div>
-                                <div class="file">b</div>
-                                <div class="file">c</div>
-                                <div class="file">d</div>
-                                <div class="file">e</div>
-                                <div class="file">f</div>
-                                <div class="file">g</div>
-                                <div class="file">h</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Right Panel: Settings & Move History -->
-            <aside class="right-panel">                <!-- Game Settings -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Settings</h3>
-                    </div>
-                    <div class="card-content">
-                        <div class="settings-grid">
-                            <div class="setting-group">
-                                <label for="ai-difficulty" class="setting-label">AI Difficulty</label>
-                                <select id="ai-difficulty" class="select">
-                                    <option value="1">Beginner (Depth 1)</option>
-                                    <option value="3">Easy (Depth 3)</option>
-                                    <option value="5" selected>Medium (Depth 5)</option>
-                                    <option value="7">Hard (Depth 7)</option>
-                                    <option value="10">Expert (Depth 10)</option>
-                                </select>
-                            </div>
-                            
-                            <div class="setting-group">
-                                <label for="player-color" class="setting-label">You Play As</label>
-                                <select id="player-color" class="select">
-                                    <option value="white" selected>White</option>
-                                    <option value="black">Black</option>
-                                </select>
-                            </div>
-                            
-                            <div class="setting-group">
-                                <label for="show-legal-moves" class="setting-label">Show Legal Moves</label>
-                                <div class="checkbox-wrapper">
-                                    <input type="checkbox" id="show-legal-moves" class="checkbox" checked>
-                                    <span class="checkmark"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="setting-group">
-                                <label for="board-theme" class="setting-label">Board Theme</label>
-                                <select id="board-theme" class="select">
-                                    <option value="classic" selected>Classic</option>
-                                    <option value="modern">Modern</option>
-                                    <option value="minimal">Minimal</option>
-                                    <option value="wood">Wood</option>
-                                    <option value="neon">Neon</option>
-                                    <option value="ocean">Ocean</option>
-                                    <option value="forest">Forest</option>
-                                    <option value="sunset">Sunset</option>
-                                    <option value="custom">Custom</option>
-                                </select>
-                            </div>
-                            
-                            <!-- Custom Theme Colors -->
-                            <div id="custom-theme-controls" class="setting-group" style="display: none;">
-                                <label class="setting-label">Custom Colors</label>
-                                <div class="custom-colors-grid">
-                                    <div class="color-picker-group">
-                                        <span class="setting-label">Light Squares</span>
-                                        <input type="color" id="custom-light" class="color-input" value="#ece8d9">
-                                    </div>
-                                    <div class="color-picker-group">
-                                        <span class="setting-label">Dark Squares</span>
-                                        <input type="color" id="custom-dark" class="color-input" value="#b8860b">
-                                    </div>
-                                    <div class="color-picker-group">
-                                        <span class="setting-label">Border</span>
-                                        <input type="color" id="custom-border" class="color-input" value="#2c2c2c">
-                                    </div>
-                                    <div class="color-picker-group">
-                                        <span class="setting-label">White Pieces</span>
-                                        <input type="color" id="custom-piece-white" class="color-input" value="#f5f5f5">
-                                    </div>
-                                    <div class="color-picker-group">
-                                        <span class="setting-label">Black Pieces</span>
-                                        <input type="color" id="custom-piece-black" class="color-input" value="#1a1a1a">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Move History -->
-                <div class="card move-history-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Move History</h3>
-                    </div>
-                    <div class="card-content">
-                        <div class="move-controls">
-                            <button id="move-first" class="move-nav-btn" title="Go to start">⏮</button>
-                            <button id="move-prev" class="move-nav-btn" title="Previous move">⏪</button>
-                            <button id="move-next" class="move-nav-btn" title="Next move">⏩</button>
-                            <button id="move-last" class="move-nav-btn" title="Go to end">⏭</button>
-                        </div>
-                        <div class="moves-container" id="moves-container">
-                            <!-- Moves will be added here -->
-                        </div>
-                        <div class="game-result" id="game-result" style="display: none;">
-                            <h3 id="result-text" class="result-title"></h3>
-                            <p id="result-reason" class="result-reason"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Captured Pieces -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Captured Pieces</h3>
-                    </div>
-                    <div class="card-content">
-                        <div class="captured-sections">
-                            <div class="captured-section">
-                                <h4 class="captured-title">Human Captured</h4>
-                                <div class="captured-pieces" id="human-captured"></div>
-                            </div>
-                            <div class="captured-section">
-                                <h4 class="captured-title">AI Captured</h4>
-                                <div class="captured-pieces" id="ai-captured"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-        </main>
-    </div>
-
-    <!-- Promotion Dialog -->
-    <div class="modal" id="promotion-modal" style="display: none;">
-        <div class="modal-content">
-            <h3>Choose Promotion Piece</h3>
-            <div class="promotion-pieces">
-                <div class="promotion-piece" data-piece="q">♕</div>
-                <div class="promotion-piece" data-piece="r">♖</div>
-                <div class="promotion-piece" data-piece="b">♗</div>
-                <div class="promotion-piece" data-piece="n">♘</div>
-            </div>
-        </div>
-    </div>    <script src="js/chess-logic.js"></script>
-    <script src="js/chess-ui.js"></script>
-    <script src="js/chess-ui-enhanced.js"></script>
     <script src="js/chess-ai.js"></script>
     <script src="js/main.js"></script>
 </body>

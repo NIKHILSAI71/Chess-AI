@@ -116,16 +116,10 @@ class AlphaZeroNetwork(nn.Module):
     def __init__(self, config: NetworkConfig):
         super().__init__()
         self.config = config
-        
-        # Input convolution
         self.input_conv = ConvBlock(config.input_channels, config.filters)
-        
-        # Residual tower
         self.residual_blocks = nn.ModuleList([
             ResidualBlock(config.filters) for _ in range(config.num_blocks)
         ])
-        
-        # Output heads
         self.policy_head = PolicyHead(config.filters, config.policy_channels)
         self.value_head = ValueHead(config.filters, config.value_hidden)
         

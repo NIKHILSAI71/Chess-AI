@@ -56,6 +56,7 @@ try:
     from src.core.evaluation import Evaluator
     from src.neural.network import AlphaZeroNetwork, NetworkConfig, NeuralNetworkEvaluator
     from src.neural.mcts import MCTS, MCTSConfig
+    from src.neural.compatibility_networks import SimpleChessNet, CompatibilityNetworkLoader
     CHESS_COMPONENTS_AVAILABLE = True
     print("✅ Chess AI components loaded successfully")
 except ImportError as e:
@@ -134,31 +135,59 @@ class ConsolidatedChessServer:
             '../models/production_chess_model.pth',
             '../models/demo_trained_model.pth'
         ]
-        
         for model_path in model_paths:
-            if Path(model_path).exists():
+            if Path(model_path).exists():                
                 try:
                     print(f"🧠 Loading model from: {model_path}")
-                    checkpoint = torch.load(model_path, map_location='cpu')
                     
-                    # Create network configuration
-                    if 'network_config' in checkpoint:
-                        net_config = NetworkConfig(**checkpoint['network_config'])
-                    else:
-                        net_config = NetworkConfig()  # Default config
-                    
-                    # Load model
-                    model = AlphaZeroNetwork(net_config)
-                    model.load_state_dict(checkpoint['model_state_dict'])
-                    model.eval()
+                    # First try loading as AlphaZero network
+                    try:
+                        checkpoint = torch.load(model_path, map_location='cpu')
+                        
+                        # Create network configuration
+                        if 'network_config' in checkpoint and isinstance(checkpoint['network_config'], dict):
+                            net_config = NetworkConfig(**checkpoint['network_config'])
+                        elif 'config' in checkpoint and isinstance(checkpoint['config'], dict): # common alternative
+                            net_config = NetworkConfig(**checkpoint['config'])
+                        else:
+                            net_config = NetworkConfig()  # Default config
+                        
+                        model = AlphaZeroNetwork(net_config)
+                        
+                        # Try to load the state_dict intelligently
+                        if 'model_state_dict' in checkpoint:
+                            model.load_state_dict(checkpoint['model_state_dict'])
+                        elif 'state_dict' in checkpoint: # another common key
+                            model.load_state_dict(checkpoint['state_dict'])
+                        elif isinstance(checkpoint, dict) and all(k.startswith('module.') for k in checkpoint.keys()): # DataParallel wrapper
+                            model.load_state_dict({k.partition('module.')[2]: v for k,v in checkpoint.items()})
+                        else: # Assume checkpoint is the state_dict itself
+                            model.load_state_dict(checkpoint)
+                            
+                        model.eval()
+                        print(f"✅ Loaded AlphaZero model: {Path(model_path).stem}")
+                        
+                    except Exception as alpha_error:
+                        print(f"⚠️ Failed to load as AlphaZero network: {alpha_error}")
+                        print("🔄 Trying compatibility network...")
+                        
+                        # Try loading as simple compatibility network
+                        loader = CompatibilityNetworkLoader()
+                        # Ensure checkpoint is available if loaded in the try block
+                        loaded_checkpoint = checkpoint if 'checkpoint' in locals() else torch.load(model_path, map_location='cpu')
+                        model = loader.load_simple_model(model_path, checkpoint_data=loaded_checkpoint) 
+                        if model is None: # load_simple_model should return None on critical failure
+                            print(f"⚠️ Compatibility loader failed to create a model for {model_path}.")
+                            # Skip this model or raise an error if a model is strictly required
+                            raise Exception(f"Failed to load {model_path} with any known network type.")
+
+                        print(f"✅ Loaded compatibility model: {Path(model_path).stem}")
                     
                     # Store model
                     model_name = Path(model_path).stem
                     self.neural_networks[model_name] = model
-                    
-                    print(f"✅ Loaded model: {model_name}")
                     self.models_loaded = True
-                    break
+                    break # Exit loop once a model is successfully loaded
                     
                 except Exception as e:
                     print(f"⚠️ Error loading {model_path}: {e}")

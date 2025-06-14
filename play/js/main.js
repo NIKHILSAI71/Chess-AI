@@ -1,7 +1,7 @@
 // Main Game Controller
 class ChessGame {    constructor() {
         this.engine = new ChessEngine();
-        this.ui = new EnhancedChessUI(this.engine);
+        this.ui = new ChessUI(this.engine);
         this.ai = new ChessAI();
         this.pythonBackend = new PythonChessBackend();
         
@@ -26,8 +26,14 @@ class ChessGame {    constructor() {
 
         // Start game
         this.checkForAIMove();
-    }    bindEvents() {
-        // Player selection handling is now in EnhancedChessUI
+    }    bindEvents() {        // Player selection handling is now in ChessUI
+          // New Game button
+        const newGameBtn = document.getElementById('new-game-btn');
+        if (newGameBtn) {
+            newGameBtn.addEventListener('click', () => {
+                this.newGame();
+            });
+        }
         
         // AI difficulty setting
         const difficultyElement = document.getElementById('ai-difficulty');
@@ -93,11 +99,15 @@ class ChessGame {    constructor() {
                     aiStatsCard.style.display = 'none';
                     break;            }
         }
-    }
-
-    async onMoveCompleted() {
+    }    async onMoveCompleted() {
         // Update game state display
         this.updateGameState();
+        
+        // Update UI display
+        if (this.ui) {
+            this.ui.updateCurrentPlayerDisplay();
+            this.ui.updateMoveCounter();
+        }
         
         // Check if game is over
         if (this.isGameOver()) {
@@ -312,6 +322,9 @@ let chessGame;
 document.addEventListener('DOMContentLoaded', function() {
     chessGame = new ChessGame();
     
+    // Make chessGame globally accessible
+    window.chessGame = chessGame;
+    
     // Add keyboard shortcuts
     document.addEventListener('keydown', function(e) {
         switch(e.key) {
@@ -342,8 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add download PGN functionality
     const downloadBtn = document.createElement('button');
     downloadBtn.textContent = '📥 Download PGN';
-    downloadBtn.className = 'btn btn-secondary';
-    downloadBtn.onclick = function() {
+    downloadBtn.className = 'btn btn-secondary';    downloadBtn.onclick = function() {
         const pgn = chessGame.getGamePGN();
         const blob = new Blob([pgn], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
@@ -354,7 +366,10 @@ document.addEventListener('DOMContentLoaded', function() {
         URL.revokeObjectURL(url);
     };
     
-    document.querySelector('.game-controls').appendChild(downloadBtn);
+    const buttonGroup = document.querySelector('.button-group');
+    if (buttonGroup) {
+        buttonGroup.appendChild(downloadBtn);
+    }
 
     console.log('♔ Chess AI Game Initialized');
     console.log('🎮 Keyboard shortcuts:');
